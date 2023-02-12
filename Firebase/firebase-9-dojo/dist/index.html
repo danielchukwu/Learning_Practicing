@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Firebase 9 Tutorial</title>
+</head>
+<body>
+   <h1>Firebase Firestore</h1>
+
+   <form class="add">
+      <label for="brand">Brand</label>
+      <input type="text" name="brand" required />
+
+      <label for="model">Model</label>
+      <input type="text" name="model" required />
+
+      <label for="year">Year</label>
+      <input type="number" name="year" required />
+
+      <button>Add Laptop</button>
+   </form>
+   
+   <form class="delete">
+      <label for="id">Document id: </label>
+      <input type="text" name="id" required />
+
+      <button>Remove Laptop</button>
+   </form>
+
+   <div class="laptops_container"></div>
+   
+   <script src="my_bundle.js"></script>
+</body>
+</html>
