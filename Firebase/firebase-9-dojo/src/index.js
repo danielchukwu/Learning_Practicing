@@ -1,7 +1,10 @@
 import { initializeApp } from 'firebase/app';
 import { 
-   getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot, query, where, orderBy
+   getFirestore, collection, getDoc, addDoc, deleteDoc, doc, onSnapshot, query, where, orderBy, serverTimestamp, updateDoc
 } from 'firebase/firestore';
+import {
+   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut
+} from 'firebase/auth';
 
 console.log("Hello World! It works😁");
 
@@ -19,10 +22,12 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 // connect to database
-const db = getFirestore();
+const db = getFirestore();    // Database connection
+const auth = getAuth();       // Auth service initialization
 
 // collection ref
 const laptopsColRef = collection(db, 'laptops');
+
 
 // display all docs
 onSnapshot(query(laptopsColRef, orderBy('year', 'desc')), (snapshot) => {
@@ -55,49 +60,16 @@ onSnapshot(query(laptopsColRef, orderBy('year', 'desc')), (snapshot) => {
             <b>Year: </b>
             <span>${item.year}</span>
          </div>
+         <div>
+            <b>CreatedAt: </b>
+            <span>${item.createdAt}</span>
+         </div>
          <br/>
       </div>`
 
       documentsDiv.innerHTML += element;
    })
 })
-   // .then((snapshot) => {
-   //    // Print document
-   //    const laptops = [];
-   //    snapshot.docs.forEach(item => {
-   //       laptops.push({ ...item.data(), id: item.id });
-   //    })
-   //    console.log(laptops);
-
-   //    // Add document to DOM
-   //    const documentsDiv = document.querySelector(".laptops_container");
-   //    laptops.forEach(item => {
-   //       const element = `<div>
-   //          <div>
-   //             <b>id: </b>
-   //             <span>${item.id}</span>
-   //          </div>
-   //          <div>
-   //             <b>Brand: </b>
-   //             <span>${item.brand}</span>
-   //          </div>
-   //          <div>
-   //             <b>Model: </b>
-   //             <span>${item.model}</span>
-   //          </div>
-   //          <div>
-   //             <b>Year: </b>
-   //             <span>${item.year}</span>
-   //          </div>
-   //          <br/>
-   //       </div>`
-
-   //       documentsDiv.innerHTML += element;
-   //    })
-   // })
-   // .catch(err => {
-   //    console.log(err.message);
-   // })
 
 
 // Adding Documents
@@ -109,7 +81,8 @@ addLaptopForm.addEventListener("submit", (e) => {
    addDoc(laptopsColRef, {
       model: addLaptopForm.model.value,
       brand: addLaptopForm.brand.value,
-      year:  addLaptopForm.year.value
+      year:  addLaptopForm.year.value,
+      createdAt: serverTimestamp()
    })
       .then(data => {
          console.log(`Successful: ${data}`);
@@ -120,6 +93,7 @@ addLaptopForm.addEventListener("submit", (e) => {
          console.log(err.message);
       })
 })
+
 
 // Deleting Documents
 const deleteLaptopForm = document.querySelector('.delete');
@@ -140,3 +114,89 @@ deleteLaptopForm.addEventListener('submit', (e) => {
          console.log(err.message);
       })
 })
+
+
+// Updating document
+const updateLaptopForm = document.querySelector('.update');
+
+updateLaptopForm.addEventListener('submit', (e) => {
+   e.preventDefault();
+
+   const updatedFields = [updateLaptopForm.brand.value, updateLaptopForm.model.value, updateLaptopForm.year.value];
+   const changes = {};
+   
+   for(let i=0; i < updatedFields.length; i++) {
+      console.log(changes);
+      if (updatedFields[i].length > 0) {
+         switch(i){
+            case 0:
+               changes['brand'] = updatedFields[0];
+               break;
+            case 1:
+               changes['model'] = updatedFields[1];
+               break;
+            case 2:
+               changes['year'] = updatedFields[2];
+         }
+      }
+   }
+
+   // Send to Firestore
+   const docRef = doc(db, 'laptops', updateLaptopForm.id.value);
+
+   updateDoc(docRef, changes)
+   .then(() => updateLaptopForm.reset());
+});
+
+
+// AUTHENTICATION(Signing users up)
+
+// Sign up
+const signUpForm = document.querySelector('.sign-up');
+
+signUpForm.addEventListener('submit', (e) => {
+   e.preventDefault();
+
+   const email = signUpForm.email.value;
+   const password = signUpForm.password.value;
+   
+   createUserWithEmailAndPassword(auth, email, password)
+      .then((cred) => {
+         console.log('user created: ', cred.user);
+         signUpForm.reset();
+      })
+      .catch((err) => {
+         console.log(err.message);
+      });
+});
+
+
+// Login
+const loginForm = document.querySelector('.login');
+
+loginForm.addEventListener('submit', (e) => {
+   e.preventDefault();
+
+   const email = loginForm.email.value;
+   const password = loginForm.password.value;
+
+   signInWithEmailAndPassword(auth, email, password)
+   .then(() => {
+      console.log('Signed in...');
+   })
+   .catch(err => {
+      console.log(err.message);
+   })
+});
+
+
+// Sign out
+const logoutBtn = document.querySelector('.logout');
+
+logoutBtn.addEventListener('click', (e) => {
+   signOut(auth)
+   .then(() => {
+      console.log('Successful Logout!');
+   })
+   .catch((err) => { console.log(err.message) })
+});

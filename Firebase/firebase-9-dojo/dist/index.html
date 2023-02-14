@@ -7,21 +7,65 @@
    <title>Firebase 9 Tutorial</title>
 </head>
 <body>
-   <h1>Firebase Firestore</h1>
+   <h2>Firebase Auth</h2>
+   <form class="sign-up">
+      <label for="email">email: </label>
+      <input type="email" name="email" required />
 
+      <label for="password">password: </label>
+      <input type="password" name="password" required />
+
+      <button>Signup</button>
+   </form>
+
+   <form class="login">
+      <label for="email">email: </label>
+      <input type="email" name="email" required />
+
+      <label for="password">password: </label>
+      <input type="password" name="password" required />
+
+      <button>Login</button>
+   </form>
+
+   <button class="logout">Logout</button>
+   
+   <h2>Firebase Firestore CRUD Operations</h2>
+
+   <!-- Create / Add Laptop -->
    <form class="add">
-      <label for="brand">Brand</label>
+      <label for="brand">Brand: </label>
       <input type="text" name="brand" required />
 
-      <label for="model">Model</label>
+      <label for="model">Model: </label>
       <input type="text" name="model" required />
 
-      <label for="year">Year</label>
+      <label for="year">Year: </label>
       <input type="number" name="year" required />
 
       <button>Add Laptop</button>
    </form>
+
+   <!-- Read Laptop -->
+
+   <!-- Update Laptop -->
+   <form class="update">
+      <label for="id">Id: </label>
+      <input type="text" name="id" />
+
+      <label for="brand">Brand: </label>
+      <input type="text" name="brand" />
+
+      <label for="model">Model: </label>
+      <input type="text" name="model" />
+
+      <label for="year">Year: </label>
+      <input type="number" name="year" />
+
+      <button>Update Laptop</button>
+   </form>
    
+   <!-- Delete / Remove Laptop -->
    <form class="delete">
       <label for="id">Document id: </label>
       <input type="text" name="id" required />
