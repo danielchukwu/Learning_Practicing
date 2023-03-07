@@ -7,6 +7,6 @@ setInterval(() => {
    console.log("Danzy - setInterval fired!")
 }, 1000);
 
-const os = require('os');
+const os = require('os'); 
 
 console.log(os);
